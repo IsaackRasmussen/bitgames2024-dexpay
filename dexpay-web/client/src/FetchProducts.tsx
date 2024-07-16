@@ -11,17 +11,13 @@ import {
   Rating,
 } from "@mui/material";
 import { AddShoppingCart } from "@mui/icons-material";
-import { defineConfig, loadEnv } from "vite";
 
 const FetchProducts = () => {
-  const envars = loadEnv(env.mode, "./");
-  const serverAPIPath = envars.VITE_SERVER_API_PATH ?? "/api";
-
   const [products, setProducts] = useState([]);
   //const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetch(`${serverAPIPath}/products/all`)
+    fetch(`${__API_PATH__}/products/all`)
       .then((res) => {
         return res.json();
       })
