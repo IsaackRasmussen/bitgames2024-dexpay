@@ -7,6 +7,9 @@ import {
   InvoiceType,
   LightsparkClient,
 } from "@lightsparkdev/lightspark-sdk";
+import { injectSpeedInsights } from "@vercel/speed-insights";
+
+injectSpeedInsights();
 
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
@@ -26,6 +29,9 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
+app.get("/", async (_req, res) => {
+  res.status(200).json({ status: "OK" });
+});
 app.get("/api/lightning/wallets", async (_req, res) => {
   const lightsparkClient = new LightsparkClient(
     new AccountTokenAuthProvider(
@@ -123,6 +129,4 @@ app.get("/api/products/all", async (_req, res) => {
   res.status(200).json({ products: productsList, categories: tagsList });
 });
 
-app.post("/api/products/rating", async (_req, res) => {
-  
-});
+app.post("/api/products/rating", async (_req, res) => {});
