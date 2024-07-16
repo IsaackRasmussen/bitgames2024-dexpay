@@ -1,10 +1,18 @@
 // server/src/main.ts
 
-import * as cors from "cors";
 import "dotenv/config";
-import * as express from "express";
+import {
+  AccountTokenAuthProvider,
+  BitcoinNetwork,
+  InvoiceType,
+  LightsparkClient,
+} from "@lightsparkdev/lightspark-sdk";
+
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
+
+const cors = require("cors");
+const express = require("express");
 
 const app = express();
 
@@ -13,6 +21,54 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+app.get("/api/lightning/wallets", async (_req, res) => {
+  const lightsparkClient = new LightsparkClient(
+    new AccountTokenAuthProvider(
+      process.env.LIGHTSPARK_API_TOKEN_CLIENT_ID,
+      process.env.LIGHTSPARK_API_TOKEN_CLIENT_SECRET
+    )
+    //"https://api.dev.dev.sparkinfra.net"
+  );
+
+  const account = await lightsparkClient.getCurrentAccount();
+  const wallets = await account.getWallets(lightsparkClient, 0);
+  const nodes = await account.getNodes(lightsparkClient, 0);
+  const localBalance = account.getLocalBalance(lightsparkClient, [
+    BitcoinNetwork.REGTEST,
+    BitcoinNetwork.TESTNET,
+    BitcoinNetwork.MAINNET,
+  ]);
+  const remoteBalance = account.getRemoteBalance(lightsparkClient, [
+    BitcoinNetwork.REGTEST,
+    BitcoinNetwork.TESTNET,
+    BitcoinNetwork.MAINNET,
+  ]);
+  const blockChain = account.getBlockchainBalance(lightsparkClient, [
+    BitcoinNetwork.REGTEST,
+    BitcoinNetwork.TESTNET,
+    BitcoinNetwork.MAINNET,
+  ]);
+  const lnInvoice = await lightsparkClient.createInvoice(
+    nodes.entities[0].id,
+    10000,
+    "test meta"
+  );
+
+  res.status(200).json({
+    account,
+    lnInvoice,
+    wallets,
+    localBalance,
+    remoteBalance,
+    blockChain,
+    nodes,
+  });
+});
 
 app.get("/api/auth/token", (_req, res) => {
   // Create a JSON object that contains the claims for your JWT.
@@ -31,10 +87,6 @@ app.get("/api/auth/token", (_req, res) => {
   const token = jwt.sign(claims, privateKey, { algorithm: "ES256" });
 
   res.status(200).json({ token: token });
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
 });
 
 app.get("/api/products/all", async (_req, res) => {
@@ -69,4 +121,8 @@ app.get("/api/products/all", async (_req, res) => {
     }) ?? [];
 
   res.status(200).json({ products: productsList, categories: tagsList });
+});
+
+app.post("/api/products/rating", async (_req, res) => {
+  
 });
