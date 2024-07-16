@@ -1,0 +1,10 @@
+^C:\PROJECTS\HACKATONS\BITGAMES2024-DEXPAY\DEXPAY-POS\BUILD\WINDOWS\X64\CMAKEFILES\3B95205D8E52ECD193AE01B12A9152E1\INSTALL_FORCE.RULE
+setlocal
+cd .
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

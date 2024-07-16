@@ -1,0 +1,28 @@
+^C:\PROJECTS\HACKATONS\BITGAMES2024-DEXPAY\DEXPAY-POS\BUILD\WINDOWS\X64\CMAKEFILES\12F8E60BF1237CDE63BA6C7E85F0FAB1\FLUTTER_WINDOWS.DLL.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E env FLUTTER_ROOT=C:\Projects\Tools\flutter PROJECT_DIR=C:\Projects\Hackatons\bitgames2024-dexpay\dexpay-pos FLUTTER_ROOT=C:\Projects\Tools\flutter FLUTTER_EPHEMERAL_DIR=C:\Projects\Hackatons\bitgames2024-dexpay\dexpay-pos\windows\flutter\ephemeral PROJECT_DIR=C:\Projects\Hackatons\bitgames2024-dexpay\dexpay-pos FLUTTER_TARGET=C:\Projects\Hackatons\bitgames2024-dexpay\dexpay-pos\lib\main.dart DART_DEFINES=RkxVVFRFUl9XRUJfQ0FOVkFTS0lUX1VSTD1odHRwczovL3d3dy5nc3RhdGljLmNvbS9mbHV0dGVyLWNhbnZhc2tpdC9lZGQ4NTQ2MTE2NDU3YmRmMWM1YmRmYjEzZWNiOTQ2M2QyYmI1ZWQ0Lw== DART_OBFUSCATION=false TRACK_WIDGET_CREATION=true TREE_SHAKE_ICONS=false PACKAGE_CONFIG=C:\Projects\Hackatons\bitgames2024-dexpay\dexpay-pos\.dart_tool\package_config.json C:/Projects/Tools/flutter/packages/flutter_tools/bin/tool_backend.bat windows-x64 Debug
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\PROJECTS\HACKATONS\BITGAMES2024-DEXPAY\DEXPAY-POS\BUILD\WINDOWS\X64\CMAKEFILES\ACE408B8BB49C9E19DD2BBE20F240B8A\FLUTTER_ASSEMBLE.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\PROJECTS\HACKATONS\BITGAMES2024-DEXPAY\DEXPAY-POS\WINDOWS\FLUTTER\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Projects/Hackatons/bitgames2024-dexpay/dexpay-pos/windows -BC:/Projects/Hackatons/bitgames2024-dexpay/dexpay-pos/build/windows/x64 --check-stamp-file C:/Projects/Hackatons/bitgames2024-dexpay/dexpay-pos/build/windows/x64/flutter/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
