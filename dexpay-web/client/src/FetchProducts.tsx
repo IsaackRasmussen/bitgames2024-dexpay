@@ -8,7 +8,7 @@ import { AddShoppingCart } from "@mui/icons-material";
 
 const FetchProducts = () => {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  //const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     fetch(`/api/products/all`)
@@ -18,7 +18,7 @@ const FetchProducts = () => {
       .then((data) => {
         console.log(data);
         setProducts(data.products);
-        setCategories(data.categories);
+        //setCategories(data.categories);
       });
   }, []);
   return (
