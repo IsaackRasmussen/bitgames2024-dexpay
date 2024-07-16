@@ -21,6 +21,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Needed for Vercel deployments
 module.exports = app;
 
 const PORT = process.env.PORT || 3001;
@@ -38,7 +40,6 @@ app.get("/api/lightning/wallets", async (_req, res) => {
       process.env.LIGHTSPARK_API_TOKEN_CLIENT_ID,
       process.env.LIGHTSPARK_API_TOKEN_CLIENT_SECRET
     )
-    //"https://api.dev.dev.sparkinfra.net"
   );
 
   const account = await lightsparkClient.getCurrentAccount();
