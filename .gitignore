@@ -44,3 +44,4 @@ app.*.map.json
 **/node_modules/
 **/.private/
 dexpay-web/server/.privatekey
+.vercel
