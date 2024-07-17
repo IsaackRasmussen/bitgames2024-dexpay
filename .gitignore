@@ -45,3 +45,4 @@ app.*.map.json
 **/.private/
 dexpay-web/server/.privatekey
 .vercel
+**/dexpay-pos/build

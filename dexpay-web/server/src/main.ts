@@ -8,11 +8,9 @@ import {
   LightsparkClient,
 } from "@lightsparkdev/lightspark-sdk";
 import { injectSpeedInsights } from "@vercel/speed-insights";
+import { json } from "stream/consumers";
 
 injectSpeedInsights();
-
-const jwt = require("jsonwebtoken");
-const fs = require("fs");
 
 const cors = require("cors");
 const express = require("express");
@@ -41,50 +39,11 @@ app.listen(PORT, () => {
 app.get("/", async (_req, res) => {
   res.status(200).json({ status: "OK" });
 });
-app.get("/api/lightning/wallets", async (_req, res) => {
-  const lightsparkClient = new LightsparkClient(
-    new AccountTokenAuthProvider(
-      process.env.LIGHTSPARK_API_TOKEN_CLIENT_ID,
-      process.env.LIGHTSPARK_API_TOKEN_CLIENT_SECRET
-    )
-  );
-
-  const account = await lightsparkClient.getCurrentAccount();
-  const wallets = await account.getWallets(lightsparkClient, 0);
-  const nodes = await account.getNodes(lightsparkClient, 0);
-  const localBalance = account.getLocalBalance(lightsparkClient, [
-    BitcoinNetwork.REGTEST,
-    BitcoinNetwork.TESTNET,
-    BitcoinNetwork.MAINNET,
-  ]);
-  const remoteBalance = account.getRemoteBalance(lightsparkClient, [
-    BitcoinNetwork.REGTEST,
-    BitcoinNetwork.TESTNET,
-    BitcoinNetwork.MAINNET,
-  ]);
-  const blockChain = account.getBlockchainBalance(lightsparkClient, [
-    BitcoinNetwork.REGTEST,
-    BitcoinNetwork.TESTNET,
-    BitcoinNetwork.MAINNET,
-  ]);
-  const lnInvoice = await lightsparkClient.createInvoice(
-    nodes.entities[0].id,
-    10000,
-    "test meta"
-  );
-
-  res.status(200).json({
-    account,
-    lnInvoice,
-    wallets,
-    localBalance,
-    remoteBalance,
-    blockChain,
-    nodes,
-  });
-});
 
 app.get("/api/auth/token", (_req, res) => {
+  const jwt = require("jsonwebtoken");
+  const fs = require("fs");
+
   // Create a JSON object that contains the claims for your JWT.
   const claims = {
     aud: "https://api.lightspark.com",
@@ -115,13 +74,15 @@ app.get("/api/products/all", async (_req, res) => {
   let productsList =
     (jsonProducts as any)?.data?.map((product) => {
       return {
-        id: product.id,
+        id: product.uid,
         name: product.name,
         categoryId: product.tag,
         sku: product.sku,
         imageUrl: product?.image0?.image_original,
         description: product.description,
-        sellingPrice: product.sellingPrice,
+        sellingPrice: product.selling_price,
+        ratingsCount: 55,
+        ratingsValue: 3 + Math.random() * 2,
       };
     }) ?? [];
 
@@ -137,4 +98,78 @@ app.get("/api/products/all", async (_req, res) => {
   res.status(200).json({ products: productsList, categories: tagsList });
 });
 
-app.post("/api/products/rating", async (_req, res) => {});
+app.get("/api/lightning/wallets", async (_req, res) => {
+  const lightsparkClient = new LightsparkClient(
+    new AccountTokenAuthProvider(
+      process.env.LIGHTSPARK_API_TOKEN_CLIENT_ID,
+      process.env.LIGHTSPARK_API_TOKEN_CLIENT_SECRET
+    )
+  );
+
+  const account = await lightsparkClient.getCurrentAccount();
+  const wallets = await account.getWallets(lightsparkClient, 0);
+  const nodes = await account.getNodes(lightsparkClient, 0);
+  const localBalance = account.getLocalBalance(lightsparkClient, [
+    BitcoinNetwork.REGTEST,
+    BitcoinNetwork.TESTNET,
+    BitcoinNetwork.MAINNET,
+  ]);
+  const remoteBalance = account.getRemoteBalance(lightsparkClient, [
+    BitcoinNetwork.REGTEST,
+    BitcoinNetwork.TESTNET,
+    BitcoinNetwork.MAINNET,
+  ]);
+  const blockChain = account.getBlockchainBalance(lightsparkClient, [
+    BitcoinNetwork.REGTEST,
+    BitcoinNetwork.TESTNET,
+    BitcoinNetwork.MAINNET,
+  ]);
+
+  res.status(200).json({
+    account,
+    wallets,
+    localBalance,
+    remoteBalance,
+    blockChain,
+    nodes,
+  });
+});
+
+app.post("/api/invoice", async (_req, res) => {
+  console.log("Creating invoice: ", _req.body);
+  const invoiceParams = _req.body;
+  console.log("Params: ", invoiceParams);
+
+  const lightsparkClient = new LightsparkClient(
+    new AccountTokenAuthProvider(
+      process.env.LIGHTSPARK_API_TOKEN_CLIENT_ID,
+      process.env.LIGHTSPARK_API_TOKEN_CLIENT_SECRET
+    )
+  );
+
+  const account = await lightsparkClient.getCurrentAccount();
+  const nodes = await account.getNodes(lightsparkClient, 0);
+
+  const priceInSats = Math.round(
+    ((invoiceParams.totalPrice ?? 0) /
+      nodes.entities[0].balances.availableToWithdrawBalance
+        .preferredCurrencyValueRounded) *
+      1000 *
+      1000 *
+      1000
+  );
+
+  const lnInvoice = await lightsparkClient.createTestModeInvoice(
+    nodes.entities[0].id,
+    priceInSats,
+    invoiceParams.text ?? "No description"
+  );
+
+  res.status(200).json({
+    owner: "Greatest bar in the world",
+    priceInSats: 2*1000*1000, //priceInSats
+    //`lightning:${lnInvoice}`,
+    lnInvoice:
+      "lightning:lnbc20m1pvjluezpp5qqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqqqsyqcyq5rqwzqfqypqhp58yjmdan79s6qqdhdzgynm4zwqd5d7xmw5fk98klysy043l2ahrqsfpp3qjmp7lwpagxun9pygexvgpjdc4jdj85fr9yq20q82gphp2nflc7jtzrcazrra7wwgzxqc8u7754cdlpfrmccae92qgzqvzq2ps8pqqqqqqpqqqqq9qqqvpeuqafqxu92d8lr6fvg0r5gv0heeeqgcrqlnm6jhphu9y00rrhy4grqszsvpcgpy9qqqqqqgqqqqq7qqzqj9n4evl6mr5aj9f58zp6fyjzup6ywn3x6sk8akg5v4tgn2q8g4fhx05wf6juaxu9760yp46454gpg5mtzgerlzezqcqvjnhjh8z3g2qqdhhwkj",
+  });
+});
