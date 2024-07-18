@@ -172,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<String> _fetchToken() async {
     final response =
-        await http.get(Uri.parse('http://192.168.2.114:5173/api/auth/token'));
+        await http.get(Uri.parse('http://localhost:5173/api/auth/token'));
 
     final auth = jsonDecode(response.body) as Map<String, dynamic>;
 
